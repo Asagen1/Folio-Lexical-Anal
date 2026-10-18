@@ -1,0 +1,8 @@
+let the measure A be 5.
+let measure B be 10.
+
+A verily became A combined with B. [note: a = a + b]
+
+alas, A matches 15,
+    speak "A tragedy!".
+    exeunt.
