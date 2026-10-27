@@ -229,7 +229,7 @@ const char *token_type_to_string(TokenType type) {
     }
 }
 
-// Main DFA - Get next token */
+// Main DFA - Get next token 
 Token get_next_token(Lexer *l) {
     State state = STATE_START;
     char c;
@@ -240,14 +240,14 @@ Token get_next_token(Lexer *l) {
         switch (state) {
             case STATE_START:
                 l->start_pos = l->pos;
-                /* Skip whitespace */
+                // Skip whitespace 
                 while (is_space(c)) {
                     advance(l);
                     c = peek(l);
                     l->start_pos = l->pos;
                 }
                 
-                /* EOF */
+                // EOF
                 if (c == '\0') {
                     Token tok;
                     tok.type = TOK_EOF;
@@ -255,54 +255,54 @@ Token get_next_token(Lexer *l) {
                     return tok;
                 }
                 
-                /* Period */
+                // Period
                 if (c == '.') {
                     advance(l);
                     return make_token(TOK_PERIOD, l);
                 }
                 
-                /* Comma */
+                // Comma
                 if (c == ',') {
                     advance(l);
                     return make_token(TOK_COMMA, l);
                 }
                 
-                /* String literal */
+                // String literal
                 if (c == '"') {
                     advance(l);
                     state = STATE_STRING;
                     break;
                 }
                 
-                /* Character literal */
+                // Character literal
                 if (c == '\'') {
                     advance(l);
                     state = STATE_CHAR_START;
                     break;
                 }
                 
-                /* Comments */
+                // Comments
                 if (c == '[') {
                     advance(l);
                     state = STATE_BRACKET;
                     break;
                 }
                 
-                /* Uppercase identifier */
+                // Uppercase identifier
                 if (c >= 'A' && c <= 'Z') {
                     advance(l);
                     state = STATE_IDENTIFIER;
                     break;
                 }
                 
-                /* Digits */
+                // Digits
                 if (c >= '0' && c <= '9') {
                     advance(l);
                     state = STATE_DIGIT;
                     break;
                 }
                 
-                /* Lowercase - keywords/operators/noise */
+                // Lowercase - keywords/operators/noise
                 if (c >= 'a' && c <= 'z') {
                     advance(l);
                     if (c == 'a') { state = STATE_A; break; }
@@ -328,12 +328,12 @@ Token get_next_token(Lexer *l) {
                     break;
                 }
                 
-                /* Invalid character - prohibited symbol */
+                // Invalid character - prohibited symbol
                 state = STATE_ERROR;
                 advance(l);
                 break;
             
-            /* Identifier state (uppercase start) */
+            // Identifier state (uppercase start)
             case STATE_IDENTIFIER:
                 c = peek(l);
                 if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9')) {
@@ -341,31 +341,31 @@ Token get_next_token(Lexer *l) {
                 } else if (is_delimiter(c)) {
                     return make_token(TOK_IDENTIFIER, l);
                 } else {
-                    /* Invalid character in identifier */
+                    // Invalid character in identifier
                     state = STATE_ERROR;
                     advance(l);
                 }
                 break;
             
-            /* Digit state */
+            // Digit state
             case STATE_DIGIT:
                 c = peek(l);
                 if (c >= '0' && c <= '9') {
                     advance(l);
                 } else if (is_delimiter(c)) {
                     return make_token(TOK_MEASURE_LIT, l);
-                } else {
-                    /* Invalid: digit followed by non-delimiter (e.g., 1stActor) */
+                } else {    
+                    // Invalid: digit followed by non-delimiter (e.g., 1stActor)
                     state = STATE_ERROR;
                     advance(l);
                 }
                 break;
             
-            /* String literal */
+            // String literal
             case STATE_STRING:
                 c = peek(l);
                 if (c == '\0' || c == '\n') {
-                    /* Unterminated string */
+                    // Unterminated string
                     return make_token(TOK_ERROR, l);
                 } else if (c == '"') {
                     advance(l);
@@ -375,7 +375,7 @@ Token get_next_token(Lexer *l) {
                 }
                 break;
             
-            /* Character literal */
+            // Character literal
             case STATE_CHAR_START:
                 c = peek(l);
                 if (c == '\0' || c == '\n' || c == '\'') {
@@ -396,7 +396,7 @@ Token get_next_token(Lexer *l) {
                 }
                 break;
             
-            /* Error state - consume until delimiter */
+            // Error state - consume until delimiter
             case STATE_ERROR:
                 c = peek(l);
                 if (is_delimiter(c)) {
@@ -406,7 +406,7 @@ Token get_next_token(Lexer *l) {
                 }
                 break;
             
-            /* Comment detection */
+            // Comment detection
             case STATE_BRACKET:
                 c = to_lower(peek(l));
                 if (c == 'n') {
@@ -416,12 +416,12 @@ Token get_next_token(Lexer *l) {
                     advance(l);
                     state = STATE_GLOSS_G;
                 } else {
-                    /* Invalid comment format */
+                    // Invalid comment format
                     return make_token(TOK_ERROR, l);
                 }
                 break;
             
-            /* Inline comment: [note: ... ] or \n */
+            // Inline comment: [note: ... ] or \n
             case STATE_NOTE_N:
                 if (to_lower(peek(l)) == 'o') { advance(l); state = STATE_NOTE_O; }
                 else { state = STATE_ERROR; }
@@ -446,7 +446,7 @@ Token get_next_token(Lexer *l) {
                     return make_token(TOK_ERROR, l);
                 } else if (c == ']' || c == '\n') {
                     if (c == ']') advance(l);
-                    // Comment consumed - reset to START */
+                    // Comment consumed - reset to START
                     state = STATE_START;
                     l->start_pos = l->pos;
                 } else {
@@ -454,7 +454,7 @@ Token get_next_token(Lexer *l) {
                 }
                 break;
             
-            // Block comment: [gloss: ... end gloss0]
+            // Block comment: [gloss: ... end gloss]
             case STATE_GLOSS_G:
                 if (to_lower(peek(l)) == 'l') { advance(l); state = STATE_GLOSS_L; }
                 else { state = STATE_ERROR; }
@@ -907,7 +907,7 @@ Token get_next_token(Lexer *l) {
                 else { state = STATE_ERROR; }
                 break;
             case STATE_INDEED:
-                /* indeed is a NOISE WORD - skip and reset to START */
+                // indeed is a NOISE WORD - skip and reset to START
                 if (is_delimiter(peek(l))) {
                     state = STATE_START;
                     l->start_pos = l->pos;
