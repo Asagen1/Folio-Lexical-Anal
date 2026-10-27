@@ -128,6 +128,65 @@ static int is_delimiter(char c);
 static char to_lower(char c);
 static Token make_token(TokenType type, Lexer *l);
 static int has_extension(const char *f);
+static int create_file(const char *source);
+
+static char *read_file(const char *file){ 
+    FILE *fptr = fopen(file, "r");
+    if (!fptr){
+        perror(file); 
+        return NULL; 
+    }
+
+    size_t cap = 256, len = 0;
+    char *input = malloc(cap);
+    if (!input){
+        fclose(fptr); 
+        return NULL; 
+    }
+
+    int c;
+    while ((c = fgetc(fptr)) != EOF) {
+        if (len + 1 >= cap) {
+            cap *= 2;
+            char *tmp = realloc(input, cap);
+            if (!tmp) { free(input); fclose(fptr); return NULL; }
+            input = tmp;
+        }
+        input[len++] = (char)c;
+    }
+    input[len] = '\0';
+
+    fclose(fptr);
+    return input;
+}
+
+static int create_file(const char *source){
+    FILE *fp = fopen("Lexical Analysis.txt", "w");
+
+    if (fp == NULL) {
+        perror("Lexical Analysis.txt");
+        return 0;
+    }
+
+    Lexer lex;
+    lexer_init(&lex, source);
+
+    fprintf(fp, "%-24s | %s\n", "Token Type", "Lexeme");
+    fprintf(fp, "-------------------------|");
+    fprintf(fp, "------------------\n");
+
+    Token tok;
+    do {
+        tok = get_next_token(&lex);
+        if (tok.type != TOK_EOF) {
+            fprintf(fp, "%-24s | %s\n",
+                    token_type_to_string(tok.type), tok.lexeme);
+        }
+    } while (tok.type != TOK_EOF);
+
+    fclose(fp);
+    return 1;
+}
 
 // peek at current char
 static char peek(Lexer *l){
@@ -1548,63 +1607,16 @@ Token get_next_token(Lexer *l) {
 }
 
 void lexer(const char *string){
-    if(has_extension(string)){
-        char *input = read_file(string);
-    } else {
+    if (!has_extension(string)) {
         printf("Error: File must have a .fol extension\n");
         return;
     }
 
     char *input = read_file(string);
-
     if(input == NULL){
         return;
     }
 
-    Lexer lex;
-    lexer_init(&lex, input);
-    
-    printf("%-24s | %s\n", "Token Type", "Lexeme");
-    printf("-------------------------|");
-    printf("------------------\n");
-    
-    Token tok;
-    do {
-        tok = get_next_token(&lex);
-        if (tok.type != TOK_EOF) {
-            printf("%-24s | %s\n", token_type_to_string(tok.type), tok.lexeme);
-        }
-    } while (tok.type != TOK_EOF);
-    
+    create_file(input);
     free(input);
-}
-
-static char *read_file(const char *file){ 
-    FILE *fptr = fopen(file, "r");
-    if (!fptr){
-        perror(file); 
-        return NULL; 
-    }
-
-    size_t cap = 256, len = 0;
-    char *input = malloc(cap);
-    if (!input){
-        fclose(fptr); 
-        return NULL; 
-    }
-
-    int c;
-    while ((c = fgetc(fptr)) != EOF) {
-        if (len + 1 >= cap) {
-            cap *= 2;
-            char *tmp = realloc(input, cap);
-            if (!tmp) { free(input); fclose(fptr); return NULL; }
-            input = tmp;
-        }
-        input[len++] = (char)c;
-    }
-    input[len] = '\0';
-
-    fclose(fptr);
-    return input;
 }
