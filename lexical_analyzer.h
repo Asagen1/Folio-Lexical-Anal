@@ -3,36 +3,35 @@
 
 #include <stddef.h>
 
-/* Token Types for Folio Language */
 typedef enum {
-    /* Delimiters */
+    // Delimiters 
     TOK_PERIOD,
     TOK_COMMA,
     
-    /* Literals */
+    // Literals 
     TOK_MEASURE_LIT,
     TOK_TALE_LIT,
     TOK_LETTER_LIT,
     TOK_AYE,
     TOK_NAUGHT,
     
-    /* Identifiers */
+    // Identifiers 
     TOK_IDENTIFIER,
     
-    /* Primitive Types */
+    // Primitive Types 
     TOK_KW_MEASURE,
     TOK_KW_FRACTION,
     TOK_KW_LETTER,
     TOK_KW_TRUTH,
     TOK_KW_POINT,
     
-    /* Collection Types */
+    // Collection Types 
     TOK_KW_LEGION,
     TOK_KW_TALE,
     TOK_KW_HOLD,
     TOK_KW_MEMBER,
     
-    /* Control Flow */
+    // Control Flow 
     TOK_KW_ALAS,
     TOK_KW_PERCHANCE,
     TOK_KW_WHILST,
@@ -40,23 +39,23 @@ typedef enum {
     TOK_KW_UNTIL,
     TOK_KW_EXEUNT,
     
-    /* I/O */
+    // I/O 
     TOK_KW_HEARKEN,
     TOK_KW_SPEAK,
     
-    /* Declarations & Assignment */
+    // Declarations & Assignment 
     TOK_KW_LET,
     TOK_ASSIGN_BE,
     TOK_ASSIGN_BECAME,
     
-    /* Arithmetic Operators */
+    // Arithmetic Operators 
     TOK_OP_COMBINED,
     TOK_OP_WITHOUT,
     TOK_OP_MAGNIFIED,
     TOK_OP_PARTED,
     TOK_OP_REMNANT,
     
-    /* Relational Operators */
+    // Relational Operators 
     TOK_REL_MATCHES,
     TOK_REL_BELIES,
     TOK_REL_GREATER_THAN,
@@ -64,30 +63,30 @@ typedef enum {
     TOK_REL_AT_LEAST,
     TOK_REL_AT_MOST,
     
-    /* Logical Operators */
+    // Logical Operators 
     TOK_LOG_AND,
     TOK_LOG_OR,
     TOK_LOG_NAY,
     
-    /* Special */
+    // Special 
     TOK_EOF,
     TOK_ERROR
 } TokenType;
 
-/* Token Structure */
+// Token Structure 
 typedef struct {
     TokenType type;
     char lexeme[256];
 } Token;
 
-/* Lexer State */
+// Lexer State 
 typedef struct {
     const char *src;
     size_t pos;
     size_t start_pos;
 } Lexer;
 
-/* Public API */
+
 void lexer_init(Lexer *l, const char *source);
 Token get_next_token(Lexer *l);
 const char *token_type_to_string(TokenType type);
