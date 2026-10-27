@@ -40,6 +40,7 @@ typedef enum {
     
     // C 
     STATE_C, STATE_CO, STATE_COM, STATE_COMB, STATE_COMBI, STATE_COMBIN, STATE_COMBINE, STATE_COMBINED,
+    STATE_CL, STATE_CLA, STATE_CLAR, STATE_CLARI, STATE_CLARIT, STATE_CLARITY,
     
     //E 
     STATE_E, STATE_EX, STATE_EXE, STATE_EXEU, STATE_EXEUN, STATE_EXEUNT,
@@ -53,8 +54,8 @@ typedef enum {
     
     //H 
     STATE_H,
-    STATE_HAR, STATE_HARK,
-    STATE_HEA, STATE_HEAR, STATE_HEARK, STATE_HEARKE, STATE_HEARKEN,
+    STATE_HA, STATE_HAR, STATE_HARK,
+    STATE_HE, STATE_HEA, STATE_HEAR, STATE_HEARK, STATE_HEARKE, STATE_HEARKEN,
     STATE_HO, STATE_HOL, STATE_HOLD,
     
     //I 
@@ -86,7 +87,7 @@ typedef enum {
     
     //P 
     STATE_P,
-    STATE_PAR, STATE_PART, STATE_PARTE, STATE_PARTED,
+    STATE_PA, STATE_PAR, STATE_PART, STATE_PARTE, STATE_PARTED,
     STATE_PE, STATE_PER, STATE_PERC, STATE_PERCH, STATE_PERCHA, STATE_PERCHAN, STATE_PERCHANC, STATE_PERCHANCE,
     STATE_PO, STATE_POI, STATE_POIN, STATE_POINT,
     
@@ -97,7 +98,7 @@ typedef enum {
     STATE_REP, STATE_REPE, STATE_REPEA, STATE_REPEAT,
     
     //S 
-    STATE_S, STATE_SP, STATE_SPE, STATE_SPEA, STATE_SPEAK,
+    STATE_S, STATE_SP, STATE_SPE, STATE_SPEA, STATE_SPEAK, STATE_SPEAKS,
     
     //T 
     STATE_T,
@@ -684,8 +685,11 @@ Token get_next_token(Lexer *l) {
             // C
             case STATE_C:
                 if (peek(l) == 'o') { advance(l); state = STATE_CO; }
+                else if (peek(l) == 'l') { advance(l); state = STATE_CL; }
                 else { state = STATE_ERROR; }
                 break;
+                
+            //combined
             case STATE_CO:
                 if (peek(l) == 'm') { advance(l); state = STATE_COM; }
                 else { state = STATE_ERROR; }
@@ -713,6 +717,36 @@ Token get_next_token(Lexer *l) {
             case STATE_COMBINED:
                 if (is_delimiter(peek(l))) { return make_token(TOK_OP_COMBINED, l); }
                 else { state = STATE_ERROR; }
+                break;
+            
+            // clarity
+            case STATE_CL:
+                if (peek(l) == 'a') { advance(l); state = STATE_CLA; }
+                else { state = STATE_ERROR; }
+                break;
+            case STATE_CLA:
+                if (peek(l) == 'r') { advance(l); state = STATE_CLAR; }
+                else { state = STATE_ERROR; }
+                break;
+            case STATE_CLAR:
+                if (peek(l) == 'i') { advance(l); state = STATE_CLARI; }
+                else { state = STATE_ERROR; }
+                break;
+            case STATE_CLARI:
+                if (peek(l) == 't') { advance(l); state = STATE_CLARIT; }
+                else { state = STATE_ERROR; }
+                break;
+            case STATE_CLARIT:
+                if (peek(l) == 'y') { advance(l); state = STATE_CLARITY; }
+                else { state = STATE_ERROR; }
+                break;
+            case STATE_CLARITY:
+                if (is_delimiter(peek(l))) {
+                    state = STATE_START;
+                    l->start_pos = l->pos;
+                } else {
+                    state = STATE_ERROR;
+                }
                 break;
             
             // E
@@ -831,18 +865,21 @@ Token get_next_token(Lexer *l) {
             // H
             case STATE_H:
                 c = peek(l);
-                if (c == 'a') { advance(l); state = STATE_HAR; }
-                else if (c == 'e') { advance(l); state = STATE_HEA; }
+                if (c == 'a') { advance(l); state = STATE_HA; }
+                else if (c == 'e') { advance(l); state = STATE_HE; }
                 else if (c == 'o') { advance(l); state = STATE_HO; }
                 else { state = STATE_ERROR; }
                 break;
             
+            case STATE_HA:
+                if (peek(l) == 'r') { advance(l); state = STATE_HAR; }
+                else { state = STATE_ERROR; }
+                break;
             case STATE_HAR:
                 if (peek(l) == 'k') { advance(l); state = STATE_HARK; }
                 else { state = STATE_ERROR; }
                 break;
             case STATE_HARK:
-                // skip and reset to start
                 if (is_delimiter(peek(l))) {
                     state = STATE_START;
                     l->start_pos = l->pos;
@@ -851,6 +888,10 @@ Token get_next_token(Lexer *l) {
                 }
                 break;
             
+            case STATE_HE:
+                if (peek(l) == 'a') { advance(l); state = STATE_HEA; }
+                else { state = STATE_ERROR; }
+                break;
             case STATE_HEA:
                 if (peek(l) == 'r') { advance(l); state = STATE_HEAR; }
                 else { state = STATE_ERROR; }
@@ -1158,12 +1199,16 @@ Token get_next_token(Lexer *l) {
             // P
             case STATE_P:
                 c = peek(l);
-                if (c == 'a') { advance(l); state = STATE_PAR; }
+                if (c == 'a') { advance(l); state = STATE_PA; }
                 else if (c == 'e') { advance(l); state = STATE_PE; }
                 else if (c == 'o') { advance(l); state = STATE_PO; }
                 else { state = STATE_ERROR; }
                 break;
             
+            case STATE_PA:
+                if (peek(l) == 'r') { advance(l); state = STATE_PAR; }
+                else { state = STATE_ERROR; }
+                break;
             case STATE_PAR:
                 if (peek(l) == 't') { advance(l); state = STATE_PART; }
                 else { state = STATE_ERROR; }
@@ -1300,7 +1345,17 @@ Token get_next_token(Lexer *l) {
                 break;
             case STATE_SPEAK:
                 if (is_delimiter(peek(l))) { return make_token(TOK_KW_SPEAK, l); }
+                else if (peek(l) == 's') { advance(l); state = STATE_SPEAKS; }
                 else { state = STATE_ERROR; }
+                break;
+            // speaks (noise)
+            case STATE_SPEAKS:
+                if (is_delimiter(peek(l))) {
+                    state = STATE_START;
+                    l->start_pos = l->pos;
+                } else {
+                    state = STATE_ERROR;
+                }
                 break;
             
             // T
