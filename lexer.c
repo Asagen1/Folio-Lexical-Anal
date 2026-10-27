@@ -184,6 +184,8 @@ static int create_file(const char *source){
         }
     } while (tok.type != TOK_EOF);
 
+    printf("File \"Lexical Analysis.txt\" created");
+
     fclose(fp);
     return 1;
 }
