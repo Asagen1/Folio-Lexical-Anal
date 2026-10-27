@@ -1,8 +1,53 @@
-let the measure A be 5.
-let measure B be 10.
+let the measure Romeo be 42.
+let measure Juliet be 100.
 
-A verily became A combined with B. [note: a = a + b]
+[note: This is an inline comment]
 
-alas, A matches 15,
-    speak "A tragedy!".
+Romeo verily became Romeo combined with Juliet.
+Romeo became Romeo parted with Juliet.
+
+[GLOSS: This is a case-insensitive
+block comment spanning
+multiple lines
+END GLOSS]
+
+alas, Romeo matches 42,
+    speak the tale "Success!".
     exeunt.
+
+perchance Romeo greater than 50,
+    hearken measure Input.
+
+whilst Romeo less than 100,
+    repeat until Romeo at least 90.
+
+let truth Flag be aye.
+let truth Test be naught.
+
+Romeo became Romeo magnified with 2.
+Romeo became Romeo without 10.
+Romeo became Romeo remnant with 3.
+
+alas, Romeo belies Juliet,
+    speak "Different!".
+
+perchance Romeo at most 200 and Flag matches aye or Test,
+    speak "Complex logic".
+
+let legion Numbers hold measure.
+let tale Message be "Hello world".
+let letter Initial be 'R'.
+let fraction Pi be 3 point 14.
+let measure member Count.
+
+[note: Test noise words]
+hark indeed the tale verily speaks with clarity.
+
+[note: Error cases below]
+jielian
+1stActor
+Total-Sum
+atleast
+greaterthan
+combinedwith
+$invalid
