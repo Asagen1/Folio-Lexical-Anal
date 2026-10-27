@@ -126,29 +126,30 @@ static int is_space(char c);
 static int is_delimiter(char c);
 static char to_lower(char c);
 static Token make_token(TokenType type, Lexer *l);
+static int has_extension(const char *f);
 
 // peek at current char
-static char peek(Lexer *l) {
+static char peek(Lexer *l){
     return l->src[l->pos];
 }
 
 // consume and return current character 
-static char advance(Lexer *l) {
+static char advance(Lexer *l){
     return l->src[l->pos++];
 }
 
-// check if character is whitespace (NO ctype.h!) 
-static int is_space(char c) {
+// check if character is whitespace 
+static int is_space(char c){
     return (c == ' ' || c == '\t' || c == '\r' || c == '\n');
 }
 
 // check if character is a delimiter 
-static int is_delimiter(char c) {
+static int is_delimiter(char c){
     return (c == '\0' || c == ' ' || c == '\t' || c == '\r' || c == '\n' || 
             c == '.' || c == ',' || c == '[' || c == '"' || c == '\'');
 }
 
-// convert to lowercase (NO ctype.h!) 
+// convert to lowercase
 static char to_lower(char c) {
     if (c >= 'A' && c <= 'Z') {
         return c + ('a' - 'A');
@@ -157,7 +158,7 @@ static char to_lower(char c) {
 }
 
 // create token from current lexeme 
-static Token make_token(TokenType type, Lexer *l) {
+static Token make_token(TokenType type, Lexer *l){
     Token tok;
     tok.type = type;
     size_t len = l->pos - l->start_pos;
@@ -173,10 +174,22 @@ static Token make_token(TokenType type, Lexer *l) {
 }
 
 // Initialize lexer 
-void lexer_init(Lexer *l, const char *source) {
+void lexer_init(Lexer *l, const char *source){
     l->src = source;
     l->pos = 0;
     l->start_pos = 0;
+}
+
+static int has_extension(const char *f){
+    size_t i = 0;
+    while(f[i]){
+        i++;
+    }
+
+    if (i < 4) return 0; 
+
+    return (f[i-4] == '.' && (f[i-3] == 'f' || f[i-3] == 'F') && 
+    (f[i-2] == 'o' || f[i-2] == 'O') && (f[i-1] == 'l' || f[i-1] == 'L'));
 }
 
 // Convert TokenType to string for output 
@@ -1534,6 +1547,13 @@ Token get_next_token(Lexer *l) {
 }
 
 void lexer(const char *string){
+    if(has_extension(string)){
+        char *input = read_file(string);
+    } else {
+        printf("Error: File must have a .fol extension\n");
+        return;
+    }
+
     char *input = read_file(string);
 
     if(input == NULL){

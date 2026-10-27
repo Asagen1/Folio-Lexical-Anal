@@ -1,7 +1,7 @@
 #include "lexical_analyzer.h"
 
 int main(){
-    const char *input = "folio_input.txt";
+    const char *input = "folio_input.fol";
 
     lexer(input);
     
