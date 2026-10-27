@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include "lexical_analyzer.h"
 
 // DFA states 
@@ -181,7 +182,7 @@ void lexer_init(Lexer *l, const char *source){
 }
 
 static int has_extension(const char *f){
-    size_t i = 0;
+    uint8_t i = 0;
     while(f[i]){
         i++;
     }
