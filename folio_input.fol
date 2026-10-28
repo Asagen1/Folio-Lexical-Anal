@@ -38,7 +38,7 @@ let legion Numbers hold 5.
 let tale Message be "Hello world".
 let letter Initial be 'R'.
 let fraction Pi be 3 point 14.
-speak member 1 of numbers.
+speak member 1 of Numbers.
 
 
 [note: Test noise words]
