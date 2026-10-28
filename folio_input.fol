@@ -34,11 +34,12 @@ alas, Romeo belies Juliet,
 perchance Romeo at most 200 and Flag matches aye or Test,
     speak "Complex logic".
 
-let legion Numbers hold measure.
+let legion Numbers hold 5.
 let tale Message be "Hello world".
 let letter Initial be 'R'.
 let fraction Pi be 3 point 14.
-let measure member Count.
+speak member 1 of numbers.
+
 
 [note: Test noise words]
 hark indeed the tale verily speaks with clarity.
