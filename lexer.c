@@ -84,7 +84,7 @@ typedef enum {
     STATE_NAY,
     
     //O 
-    STATE_O, STATE_OR,
+    STATE_O, STATE_OR, STATE_OF,
     
     //P 
     STATE_P,
@@ -274,6 +274,7 @@ const char *token_type_to_string(TokenType type) {
         case TOK_KW_TALE: return "TOK_KW_TALE";
         case TOK_KW_HOLD: return "TOK_KW_HOLD";
         case TOK_KW_MEMBER: return "TOK_KW_MEMBER";
+        case TOK_KW_OF: return "TOK_KW_OF";
         case TOK_KW_ALAS: return "TOK_KW_ALAS";
         case TOK_KW_PERCHANCE: return "TOK_KW_PERCHANCE";
         case TOK_KW_WHILST: return "TOK_KW_WHILST";
@@ -1264,10 +1265,15 @@ Token get_next_token(Lexer *l) {
             // O
             case STATE_O:
                 if (peek(l) == 'r') { advance(l); state = STATE_OR; }
-                else { state = STATE_ERROR; }
+                else if(peek(l) == 'f'){ advance(l); state = STATE_OF; }
+                else { state = STATE_ERROR; }   
                 break;
             case STATE_OR:
                 if (is_delimiter(peek(l))) { return make_token(TOK_LOG_OR, l); }
+                else { state = STATE_ERROR; }
+                break;
+            case STATE_OF:
+                if (is_delimiter(peek(l))){ return make_token(TOK_KW_OF, l);}
                 else { state = STATE_ERROR; }
                 break;
             

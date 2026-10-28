@@ -30,6 +30,7 @@ typedef enum {
     TOK_KW_TALE,
     TOK_KW_HOLD,
     TOK_KW_MEMBER,
+    TOK_KW_OF,
     
     // Control Flow 
     TOK_KW_ALAS,
