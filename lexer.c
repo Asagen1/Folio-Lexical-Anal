@@ -129,6 +129,7 @@ static char to_lower(char c);
 static Token make_token(TokenType type, Lexer *l);
 static int has_extension(const char *f);
 static int create_file(const char *source);
+static const char *token_classification(TokenType type);
 
 static char *read_file(const char *file){ 
     FILE *fptr = fopen(file, "r");
@@ -171,16 +172,15 @@ static int create_file(const char *source){
     Lexer lex;
     lexer_init(&lex, source);
 
-    fprintf(fp, "%-24s | %s\n", "Token Type", "Lexeme");
-    fprintf(fp, "-------------------------|");
-    fprintf(fp, "------------------\n");
+    fprintf(fp, "%-24s | %-18s | %s\n", "Token Type", "Lexeme", "Classification");
+    fprintf(fp, "-------------------------|--------------------|--------------------------\n");
 
     Token tok;
     do {
         tok = get_next_token(&lex);
         if (tok.type != TOK_EOF) {
-            fprintf(fp, "%-24s | %s\n",
-                    token_type_to_string(tok.type), tok.lexeme);
+            fprintf(fp, "%-24s | %-18s | %s\n",
+                    token_type_to_string(tok.type), tok.lexeme, token_classification(tok.type));
         }
     } while (tok.type != TOK_EOF);
 
@@ -252,6 +252,87 @@ static int has_extension(const char *f){
 
     return (f[i-4] == '.' && (f[i-3] == 'f' || f[i-3] == 'F') && 
     (f[i-2] == 'o' || f[i-2] == 'O') && (f[i-1] == 'l' || f[i-1] == 'L'));
+}
+
+// create classifications for token types
+static const char *token_classification(TokenType type) {
+    switch (type) {
+        case TOK_PERIOD:
+        case TOK_COMMA:
+            return "Delimiter";
+        
+        case TOK_MEASURE_LIT:
+        case TOK_TALE_LIT:
+        case TOK_LETTER_LIT:
+        case TOK_AYE:
+        case TOK_NAUGHT:
+            return "Literal";
+        
+        case TOK_IDENTIFIER:
+            return "Identifier";
+    
+        case TOK_KW_MEASURE:
+        case TOK_KW_FRACTION:
+        case TOK_KW_LETTER:
+        case TOK_KW_TRUTH:
+        case TOK_KW_POINT:
+            return "Keyword (primitive type)";
+        
+        case TOK_KW_LEGION:
+        case TOK_KW_TALE:
+        case TOK_KW_HOLD:
+        case TOK_KW_MEMBER:
+        case TOK_KW_OF:
+            return "Keyword (collection type)";
+        
+        case TOK_KW_ALAS:
+        case TOK_KW_PERCHANCE:
+        case TOK_KW_WHILST:
+        case TOK_KW_REPEAT:
+        case TOK_KW_UNTIL:
+        case TOK_KW_EXEUNT:
+            return "Keyword (control flow)";
+        
+        case TOK_KW_HEARKEN:
+        case TOK_KW_SPEAK:
+            return "Keyword (I/O)";
+        
+        case TOK_KW_LET:
+            return "Keyword (declaration)";
+
+        case TOK_ASSIGN_BE:
+        case TOK_ASSIGN_BECAME:
+            return "Assignment operator";
+
+        case TOK_OP_COMBINED:
+        case TOK_OP_WITHOUT:
+        case TOK_OP_MAGNIFIED:
+        case TOK_OP_PARTED:
+        case TOK_OP_REMNANT:
+            return "Arithmetic operator";
+
+        case TOK_REL_MATCHES:
+        case TOK_REL_BELIES:
+        case TOK_REL_GREATER_THAN:
+        case TOK_REL_LESS_THAN:
+        case TOK_REL_AT_LEAST:
+        case TOK_REL_AT_MOST:
+            return "Relational operator";
+
+        case TOK_LOG_AND:
+        case TOK_LOG_OR:
+        case TOK_LOG_NAY:
+            return "Logical operator";
+        
+        
+        case TOK_EOF:
+            return "Special (EOF)";
+        case TOK_ERROR:
+            return "Error";
+        
+        default:
+            return "Unknown";
+    }
 }
 
 // Convert TokenType to string for output 
